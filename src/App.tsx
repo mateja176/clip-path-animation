@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useRef, useState } from 'react';
 import './App.css';
 
+const small = 'circle(10% at 50% 50%)';
+const medium = 'circle(50% at 50% 50%)';
+
+const normal = 'normal';
+const reverse = 'reverse';
+
 const App: React.FC = () => {
+  const [direction, setDirection] = useState<typeof normal | typeof reverse>(
+    normal,
+  );
+
+  const toggleDirection = () =>
+    setDirection(direction => (direction === normal ? reverse : normal));
+
+  const divRef = useRef<HTMLDivElement>();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div ref={divRef} style={{ clipPath: small }} className="shape" />
+      <button
+        onClick={() => {
+          toggleDirection();
+
+          (divRef.current || document.createElement('div')).animate(
+            [
+              {
+                clipPath: small,
+              },
+              {
+                clipPath: medium,
+              },
+            ],
+            {
+              direction,
+              duration: 1000,
+              fill: 'forwards',
+            },
+          );
+        }}
+      >
+        Animate
+      </button>
     </div>
   );
-}
+};
 
 export default App;
